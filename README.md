@@ -147,7 +147,3 @@ Serve `frontend/dist/` with any static web server. Ensure `VITE_API_BASE_URL` po
 - **API not reachable**: Verify `VITE_API_BASE_URL` in `frontend/.env` and that the backend is listening on that URL.
 - **Mongo connection errors**: Check `MONGO_URI`. With Compose it should be `mongodb://mongo:27017/songs_db`; locally `mongodb://localhost:27017/songs_db`.
 - **Port conflicts**: Change `PORT` in backend or Vite dev port via `vite` options if 5000/5173 are in use.
-
-## License
-
-MIT (or your chosen license)
