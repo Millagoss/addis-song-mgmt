@@ -1,7 +1,7 @@
 import { ThemeProvider, Global, css } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { theme } from "./theme/theme";
-import { useAppDispatch } from "./app/hooks";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { fetchSongsRequested } from "./features/songs/slice";
 import {
   fetchOverviewRequested,
@@ -16,6 +16,8 @@ import { StatsPanel } from "./features/stats/StatsPanel";
 export default function App() {
   const dispatch = useAppDispatch();
   const [view, setView] = useState<"songs" | "stats">("songs");
+  const songsLoading = useAppSelector((s) => s.songs.loading);
+  const statsLoading = useAppSelector((s) => s.stats.loading);
 
   useEffect(() => {
     dispatch(fetchSongsRequested());
@@ -26,7 +28,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <Global styles={globalStyles} />
-      <Box p={5} style={{ minHeight: "100vh" }}>
+      <Box p={5} style={{ minHeight: "100vh", overflowX: "hidden" }}>
         <Box maxWidth={1200} mx="auto" px={2}>
           <Box
             display="flex"
@@ -82,6 +84,7 @@ export default function App() {
 
           {/* Songs Page */}
           <AnimatedPage visible={view === "songs"}>
+            <LoadingInline label="Loading songs..." visible={songsLoading} />
             <FilterBar />
             <Box display="flex" gap={4} mt={4} flexWrap="wrap">
               <Box
@@ -99,6 +102,7 @@ export default function App() {
 
           {/* Statistics Page */}
           <AnimatedPage visible={view === "stats"}>
+            <LoadingInline label="Loading statistics..." visible={statsLoading} />
             <Box bg="surface" p={4} borderRadius={8}>
               <StatsPanel />
             </Box>
@@ -181,14 +185,35 @@ function AnimatedPage({
         transition:
           "opacity 240ms ease, transform 240ms ease, max-height 240ms ease",
         opacity: visible ? 1 : 0,
-        transform: `translateY(${visible ? 0 : 6}px)`,
+        transform: `translateX(${visible ? 0 : 12}px)`,
         pointerEvents: visible ? "auto" : "none",
         position: "relative",
         maxHeight: visible ? "2000px" : "0px",
         overflow: "hidden",
+        willChange: "transform, opacity",
       }}
     >
       {children}
+    </div>
+  );
+}
+
+function LoadingInline({ label, visible }: { label: string; visible?: boolean }) {
+  if (!visible) return null;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+      <span
+        style={{
+          width: 16,
+          height: 16,
+          borderRadius: "50%",
+          border: "2px solid #334155",
+          borderTopColor: theme.colors.primary,
+          display: "inline-block",
+          animation: "spin 0.9s linear infinite",
+        }}
+      />
+      <span style={{ color: "#94a3b8", fontSize: 12 }}>{label}</span>
     </div>
   );
 }
