@@ -69,6 +69,11 @@ export function SongTable() {
           </tr>
         </thead>
         <tbody>
+          {loading && (
+            <tr style={{ textAlign: "center" }}>
+              <Td colSpan={5}>Loading...</Td>
+            </tr>
+          )}
           {items.length === 0 && !loading ? (
             <tr style={{ textAlign: "center" }}>
               <Td colSpan={5}>No data to display</Td>
@@ -164,7 +169,6 @@ export function SongTable() {
 
   return (
     <Box>
-      {loading && <Box my={3}>Loading...</Box>}
       {error && (
         <Box my={3} color="danger">
           {error}
