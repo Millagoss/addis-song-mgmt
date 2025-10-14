@@ -10,6 +10,7 @@ import {
 import type { Song } from "../types";
 import { setPage } from "../../filters/slice";
 import type { RootState } from "../../../app/store";
+import { width } from "styled-system";
 
 export function SongTable() {
   const dispatch = useAppDispatch();
@@ -68,91 +69,97 @@ export function SongTable() {
           </tr>
         </thead>
         <tbody>
-          {items.map((s: Song) => (
-            <tr key={s._id}>
-              <Td>
-                {editId === s._id ? (
-                  <Input
-                    value={form.title || ""}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, title: e.target.value }))
-                    }
-                  />
-                ) : (
-                  s.title
-                )}
-              </Td>
-              <Td>
-                {editId === s._id ? (
-                  <Input
-                    value={form.artist || ""}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, artist: e.target.value }))
-                    }
-                  />
-                ) : (
-                  s.artist
-                )}
-              </Td>
-              <Td>
-                {editId === s._id ? (
-                  <Input
-                    value={form.album || ""}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, album: e.target.value }))
-                    }
-                  />
-                ) : (
-                  s.album
-                )}
-              </Td>
-              <Td>
-                {editId === s._id ? (
-                  <Input
-                    value={form.genre || ""}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, genre: e.target.value }))
-                    }
-                  />
-                ) : (
-                  s.genre
-                )}
-              </Td>
-              <Td>
-                {editId === s._id ? (
-                  <>
-                    <IconBtn title="Save" onClick={saveEdit}>
-                      {IconCheck()}
-                    </IconBtn>
-                    <IconBtn
-                      title="Cancel"
-                      variant="muted"
-                      onClick={cancelEdit}
-                    >
-                      {IconX()}
-                    </IconBtn>
-                  </>
-                ) : (
-                  <>
-                    <IconBtn title="Edit" onClick={() => startEdit(s)}>
-                      {IconEdit()}
-                    </IconBtn>
-                    <IconBtn
-                      title="Delete"
-                      variant="danger"
-                      onClick={() => onDelete(s._id!)}
-                    >
-                      {IconTrash()}
-                    </IconBtn>
-                  </>
-                )}
-              </Td>
+          {items.length === 0 && !loading ? (
+            <tr style={{ textAlign: "center" }}>
+              <Td colSpan={5}>No data to display</Td>
             </tr>
-          ))}
+          ) : (
+            items.map((s: Song) => (
+              <tr key={s._id}>
+                <Td>
+                  {editId === s._id ? (
+                    <Input
+                      value={form.title || ""}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, title: e.target.value }))
+                      }
+                    />
+                  ) : (
+                    s.title
+                  )}
+                </Td>
+                <Td>
+                  {editId === s._id ? (
+                    <Input
+                      value={form.artist || ""}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, artist: e.target.value }))
+                      }
+                    />
+                  ) : (
+                    s.artist
+                  )}
+                </Td>
+                <Td>
+                  {editId === s._id ? (
+                    <Input
+                      value={form.album || ""}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, album: e.target.value }))
+                      }
+                    />
+                  ) : (
+                    s.album
+                  )}
+                </Td>
+                <Td>
+                  {editId === s._id ? (
+                    <Input
+                      value={form.genre || ""}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, genre: e.target.value }))
+                      }
+                    />
+                  ) : (
+                    s.genre
+                  )}
+                </Td>
+                <Td>
+                  {editId === s._id ? (
+                    <>
+                      <IconBtn title="Save" onClick={saveEdit}>
+                        {IconCheck()}
+                      </IconBtn>
+                      <IconBtn
+                        title="Cancel"
+                        variant="muted"
+                        onClick={cancelEdit}
+                      >
+                        {IconX()}
+                      </IconBtn>
+                    </>
+                  ) : (
+                    <>
+                      <IconBtn title="Edit" onClick={() => startEdit(s)}>
+                        {IconEdit()}
+                      </IconBtn>
+                      <IconBtn
+                        title="Delete"
+                        variant="danger"
+                        onClick={() => onDelete(s._id!)}
+                      >
+                        {IconTrash()}
+                      </IconBtn>
+                    </>
+                  )}
+                </Td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     ),
-    [items, editId, form]
+    [items, editId, form, loading]
   );
 
   return (
@@ -241,9 +248,16 @@ function Th({ children }: { children: React.ReactNode }) {
     </th>
   );
 }
-function Td({ children }: { children: React.ReactNode }) {
+function Td({
+  children,
+  ...props
+}: {
+  children: React.ReactNode;
+  [key: string]: any;
+}) {
   return (
     <td
+      {...props}
       style={{
         padding: "12px 10px",
         borderBottom: "1px solid #1f2937",

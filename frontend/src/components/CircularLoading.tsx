@@ -16,8 +16,8 @@ export function CircularLoading({ visible }: { visible?: boolean }) {
   return (
     <span
       css={css`
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         border: 2px solid #334155;
         border-top-color: ${theme.colors.primary};
@@ -28,4 +28,3 @@ export function CircularLoading({ visible }: { visible?: boolean }) {
     />
   );
 }
-
