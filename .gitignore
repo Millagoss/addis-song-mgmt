@@ -1,0 +1,19 @@
+# Node
+node_modules/
+*.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Build outputs
+backend/dist/
+frontend/dist/
+
+# Env files
+.env
+backend/.env
+frontend/.env
+
+# OS
+.DS_Store
+Thumbs.db
