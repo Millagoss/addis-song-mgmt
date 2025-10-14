@@ -12,6 +12,7 @@ import { FilterBar } from "./features/filters/FilterBar";
 import { SongForm } from "./features/songs/components/SongForm";
 import { SongTable } from "./features/songs/components/SongTable";
 import { StatsPanel } from "./features/stats/StatsPanel";
+import { CircularLoading } from "./components/CircularLoading";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -51,8 +52,9 @@ export default function App() {
                 ♪
               </Box>
               <Box>
-                <Box
+                                <Box
                   as="h1"
+                  margin="0px"
                   css={{
                     color: theme.colors.text,
                     fontSize: 24,
@@ -60,6 +62,7 @@ export default function App() {
                   }}
                 >
                   Songs Manager
+                  <CircularLoading visible={songsLoading || statsLoading} />
                 </Box>
                 <Box color="muted" fontSize={12}>
                   Manage your music library
@@ -84,7 +87,6 @@ export default function App() {
 
           {/* Songs Page */}
           <AnimatedPage visible={view === "songs"}>
-            <LoadingInline label="Loading songs..." visible={songsLoading} />
             <FilterBar />
             <Box display="flex" gap={4} mt={4} flexWrap="wrap">
               <Box
@@ -102,7 +104,6 @@ export default function App() {
 
           {/* Statistics Page */}
           <AnimatedPage visible={view === "stats"}>
-            <LoadingInline label="Loading statistics..." visible={statsLoading} />
             <Box bg="surface" p={4} borderRadius={8}>
               <StatsPanel />
             </Box>
@@ -142,6 +143,15 @@ const globalStyles = css`
     outline: none;
     box-shadow: 0 0 0 2px ${theme.colors.primary};
     border-color: ${theme.colors.primary};
+  }
+
+  @media (max-width: 768px) {
+    body {
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+    }
   }
 `;
 
@@ -198,22 +208,3 @@ function AnimatedPage({
   );
 }
 
-function LoadingInline({ label, visible }: { label: string; visible?: boolean }) {
-  if (!visible) return null;
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-      <span
-        style={{
-          width: 16,
-          height: 16,
-          borderRadius: "50%",
-          border: "2px solid #334155",
-          borderTopColor: theme.colors.primary,
-          display: "inline-block",
-          animation: "spin 0.9s linear infinite",
-        }}
-      />
-      <span style={{ color: "#94a3b8", fontSize: 12 }}>{label}</span>
-    </div>
-  );
-}
