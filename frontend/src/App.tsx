@@ -28,7 +28,12 @@ export default function App() {
       <Global styles={globalStyles} />
       <Box p={5} style={{ minHeight: "100vh" }}>
         <Box maxWidth={1200} mx="auto" px={2}>
-          <Box display="flex" alignItems="center" mb={4} justifyContent="space-between">
+          <Box
+            display="flex"
+            alignItems="center"
+            mb={4}
+            justifyContent="space-between"
+          >
             <Box display="flex" alignItems="center" style={{ gap: 12 }}>
               <Box
                 display="flex"
@@ -54,36 +59,50 @@ export default function App() {
                 >
                   Songs Manager
                 </Box>
-                <Box color="muted" fontSize={12}>Manage your music library</Box>
+                <Box color="muted" fontSize={12}>
+                  Manage your music library
+                </Box>
               </Box>
             </Box>
             <Box>
-              <NavBtn active={view === "songs"} onClick={() => setView("songs")}>
+              <NavBtn
+                active={view === "songs"}
+                onClick={() => setView("songs")}
+              >
                 Songs
               </NavBtn>
-              <NavBtn active={view === "stats"} onClick={() => setView("stats")}>
+              <NavBtn
+                active={view === "stats"}
+                onClick={() => setView("stats")}
+              >
                 Statistics
               </NavBtn>
             </Box>
           </Box>
 
-        {/* Songs Page */}
-        <AnimatedPage visible={view === "songs"}>
-          <FilterBar />
-          <Box display="flex" gap={4} mt={4} flexWrap="wrap">
-            <Box flex="2 1 600px" bg="surface" p={4} borderRadius={8}>
-              <SongForm />
-              <SongTable />
+          {/* Songs Page */}
+          <AnimatedPage visible={view === "songs"}>
+            <FilterBar />
+            <Box display="flex" gap={4} mt={4} flexWrap="wrap">
+              <Box
+                flex="2 1 600px"
+                bg="surface"
+                border="1px solid #1f2937"
+                p={4}
+                borderRadius={8}
+              >
+                <SongForm />
+                <SongTable />
+              </Box>
             </Box>
-          </Box>
-        </AnimatedPage>
+          </AnimatedPage>
 
-        {/* Statistics Page */}
-        <AnimatedPage visible={view === "stats"}>
-          <Box bg="surface" p={4} borderRadius={8}>
-            <StatsPanel />
-          </Box>
-        </AnimatedPage>
+          {/* Statistics Page */}
+          <AnimatedPage visible={view === "stats"}>
+            <Box bg="surface" p={4} borderRadius={8}>
+              <StatsPanel />
+            </Box>
+          </AnimatedPage>
         </Box>
       </Box>
     </ThemeProvider>

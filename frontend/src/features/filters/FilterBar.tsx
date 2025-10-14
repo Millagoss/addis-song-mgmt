@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { Box } from "../../components/Box";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { api } from "../../api/client";
 import {
   setAlbum,
   setArtist,
@@ -8,6 +9,7 @@ import {
   setLimit,
   setQuery,
   setSort,
+  resetFilters,
 } from "./slice";
 import { fetchSongsRequested } from "../songs/slice";
 import type { RootState } from "../../app/store";
@@ -16,6 +18,10 @@ export function FilterBar() {
   const dispatch = useAppDispatch();
   const filters = useAppSelector((s: RootState) => s.filters);
   const [qLocal, setQLocal] = useState(filters.q);
+  const [genres, setGenres] = useState<string[]>([]);
+  const [artists, setArtists] = useState<string[]>([]);
+  const [albums, setAlbums] = useState<string[]>([]);
+  const [loadingOpts, setLoadingOpts] = useState(false);
 
   useEffect(() => {
     setQLocal(filters.q);
@@ -31,6 +37,37 @@ export function FilterBar() {
     }, 300);
     return () => clearTimeout(id);
   }, [qLocal]);
+
+  // Fetch distinct options for dropdowns on mount
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoadingOpts(true);
+        const [g, a, al] = await Promise.all([
+          api.get<string[]>("/api/stats/distinct/genres"),
+          api.get<string[]>("/api/stats/distinct/artists"),
+          api.get<string[]>("/api/stats/distinct/albums"),
+        ]);
+        if (!cancelled) {
+          setGenres(g.data || []);
+          setArtists(a.data || []);
+          setAlbums(al.data || []);
+        }
+      } catch (_) {
+        if (!cancelled) {
+          setGenres([]);
+          setArtists([]);
+          setAlbums([]);
+        }
+      } finally {
+        if (!cancelled) setLoadingOpts(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -62,6 +99,12 @@ export function FilterBar() {
     dispatch(fetchSongsRequested());
   };
 
+  const onClear = () => {
+    dispatch(resetFilters());
+    setQLocal("");
+    dispatch(fetchSongsRequested());
+  };
+
   return (
     <Box
       display="flex"
@@ -78,29 +121,50 @@ export function FilterBar() {
         placeholder="Search"
         value={qLocal}
         onChange={onChange}
-        style={inputStyle}
+        style={{ width: "250px" }}
       />
-      <input
+      <select
         name="genre"
-        placeholder="Genre"
         value={filters.genre}
         onChange={onChange}
         style={inputStyle}
-      />
-      <input
+        disabled={loadingOpts}
+      >
+        <option value="">All Genres</option>
+        {genres.map((g) => (
+          <option key={g} value={g}>
+            {g}
+          </option>
+        ))}
+      </select>
+      <select
         name="artist"
-        placeholder="Artist"
         value={filters.artist}
         onChange={onChange}
         style={inputStyle}
-      />
-      <input
+        disabled={loadingOpts}
+      >
+        <option value="">All Artists</option>
+        {artists.map((a) => (
+          <option key={a} value={a}>
+            {a}
+          </option>
+        ))}
+      </select>
+      <select
         name="album"
-        placeholder="Album"
         value={filters.album}
         onChange={onChange}
         style={inputStyle}
-      />
+        disabled={loadingOpts}
+      >
+        <option value="">All Albums</option>
+        {albums.map((al) => (
+          <option key={al} value={al}>
+            {al}
+          </option>
+        ))}
+      </select>
 
       <select
         name="sortBy"
@@ -135,6 +199,9 @@ export function FilterBar() {
         <option value={10}>10</option>
         <option value={20}>20</option>
       </select>
+      <button type="button" onClick={onClear} style={buttonStyle}>
+        Clear Filters
+      </button>
     </Box>
   );
 }
@@ -145,5 +212,14 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid #1f2937",
   background: "#111827",
   color: "#e5e7eb",
-  minWidth: 100,
+  maxWidth: "160px",
+};
+
+const buttonStyle: React.CSSProperties = {
+  padding: 8,
+  borderRadius: 6,
+  border: "1px solid #374151",
+  background: "#374151",
+  color: "#e5e7eb",
+  cursor: "pointer",
 };

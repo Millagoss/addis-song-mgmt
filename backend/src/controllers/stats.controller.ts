@@ -42,3 +42,22 @@ export async function statsByAlbum(_req: Request, res: Response) {
   ]);
   return res.json(data);
 }
+
+// Distinct lists for filter dropdowns
+export async function distinctGenres(_req: Request, res: Response) {
+  const values = await Song.distinct("genre");
+  const cleaned = (values as string[]).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  return res.json(cleaned);
+}
+
+export async function distinctArtists(_req: Request, res: Response) {
+  const values = await Song.distinct("artist");
+  const cleaned = (values as string[]).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  return res.json(cleaned);
+}
+
+export async function distinctAlbums(_req: Request, res: Response) {
+  const values = await Song.distinct("album");
+  const cleaned = (values as string[]).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  return res.json(cleaned);
+}
