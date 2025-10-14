@@ -79,6 +79,7 @@ export function SongTable() {
               <Td colSpan={5}>No data to display</Td>
             </tr>
           ) : (
+            !loading &&
             items.map((s: Song) => (
               <tr key={s._id}>
                 <Td>
